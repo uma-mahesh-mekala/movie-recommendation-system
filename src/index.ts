@@ -45,6 +45,7 @@ Please provide one of the following options when running the CLI
 - delete-collection <collection_name>: deletes a chromaDB collection with specified name
 - recommendations: To start an interactive interface for movie recommendation system
                 `)
+            break;
         default:
             console.log(`Invalid command: Please pass help option when you run the npm script to know all available options`)
     }

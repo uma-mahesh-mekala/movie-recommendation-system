@@ -10,32 +10,51 @@ async function startInteractiveMode(): Promise<void> {
         input: stdin,
         output: stdout
     });
+    let interrupted = false;
 
+    const shutdown = () => {
+        interrupted = true;
+        rl.close();
+    };
+
+    process.once("SIGINT", shutdown);
     console.log('\n🎬 Movie Recommendation System');
     console.log('Type "exit" or "quit" to close the interactive mode\n');
 
-    while (true) {
-        const question = await rl.question('What kind of movies do you like?\n>');
-        const trimmed = question.trim();
+    try {
+        while (!interrupted) {
+            let question: string;
+            try {
+                question = await rl.question('What kind of movies do you like?\n>');
+            } catch (error) {
+                if (interrupted || (error instanceof Error && error.name === 'AbortError')) {
+                    break;
+                }
+                throw error;
+            }
 
-        if (!trimmed) {
-            continue;
-        }
+            const trimmed = question.trim();
 
-        if (trimmed === 'exit' || trimmed === 'quit') {
-            break;
-        }
+            if (!trimmed) {
+                continue;
+            }
 
-        try {
-            await getRecommendations(trimmed);
-        } catch (error) {
-            console.log('There is an error getting recommendations, please try again after sometime');
-            continue;
+            if (trimmed === 'exit' || trimmed === 'quit') {
+                break;
+            }
+
+            try {
+                await getRecommendations(trimmed);
+            } catch (error) {
+                console.log('There is an error getting recommendations, please try again after sometime');
+                continue;
+            }
         }
+    } finally {
+        rl.close();
+        process.removeListener('SIGINT', shutdown);
     }
-
-    rl.close();
-    console.log('Good Bye!');
+    console.log('Good Bye!👋');
 }
 
 export default startInteractiveMode;
