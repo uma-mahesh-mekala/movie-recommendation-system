@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "nodenext",
+        "rootDir": "src",
+        "outDir": "dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "useUnknownInCatchVariables": false,
+        "moduleResolution": "nodenext"
+   },
+   "include": ["src/**/*"],
+   "exclude": ["node_modules/**/*"]
+}
